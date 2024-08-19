@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add meta tags for character set and viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Add title to the page -->
+    <title>Log Viewer</title>
+
+    <!-- Add stylesheets and avoid duplicate links -->
+    <link rel="stylesheet" type="text/css" href="your-custom-stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="your-general-stylesheet.css">
+
+    <!-- Inline styles for the body -->
+    <style lang="en" type="text/css">
+        body {
+            color: #EBEBE8;
+            background-color: #31352E;
+        }
+    </style>
+</head>
+<body onload="updateComponent()">
+    <!-- Header Section -->
+    <h1 style="
+        display: flex;
+        background: darkgreen;
+        color: white;
+        justify-content: center;
+        text-shadow: -1px 0px 10px white;
+        box-shadow: 0 0 10px #D1E2C4;
+        border-radius: 9px;
+    ">
+        Log Viewer
+    </h1>
+
+    <!-- JavaScript Section -->
+    <script>
+        // Use const for constant values
+        const myTimeout = setInterval(updateComponent, 5000);
+
+        function updateComponent() {
+            // Use let instead of var for block-scoped variables
+            let name = document.querySelector("body > form > input[type=text]").value;
+
+            // Fetch data from Flask route
+            fetch('/update')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data[1][1]);
+                    let l = data.length;
+                    let v = `
+                            <tbody style="font-size: 182%;">
+                                <tr style="color: orange;">
+                                    <th>Computer Name</th>
+                                    <th>Log Message</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                </tr>
+                        `;
+
+                    for (let i = 0; i < l; i++) {
+                        if (name === "" || data[i][1].includes(name)) {
+                            v += `<tr>
+                                        <td>${data[i][1]}</td>
+                                        <td>${data[i][2]}</td>
+                                        <td>${data[i][3]}</td>
+                                        <td>${data[i][4]}</td>
+                                    </tr>`;
+                        }
+                    }
+
+                    v += '</tbody>';
+                    // Update the content of the component
+                    document.getElementById('tabl').innerHTML = v;
+                })
+                .catch(error => {
+                    // Log any errors
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+
+    <!-- Form Section -->
+    <form action="" method="get" style="
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    ">
+        <label for="computer_name" style="font-size: 19px;">Filter by Computer Name: </label>
+        <input type="text" name="computer_name" value="" style="
+            background-color: #D1E2C4;
+            border-radius: 5px;
+        " autocomplete="off">
+    </form>
+
+    <!-- Table Section -->
+    <table border="1" id="tabl" style="
+        display: flex;
+        border: 2px solid #D1E2C4;
+        border-radius: 31px;
+        justify-content: center;
+    ">
+    </table>
+
+    <!-- Additional Elements -->
+    <iframe frameborder="0" scrolling="no" style="background-color: transparent; border: 0px; display: none;"></iframe>
+    <div id="GOOGLE_INPUT_CHEXT_FLAG" style="display: none;" input="" input_stat="{&quot;tlang&quot;:true,&quot;tsbc&quot;:true,&quot;pun&quot;:true,&quot;mk&quot;:true,&quot;ss&quot;:true}"></div>
+    <iframe frameborder="0" scrolling="no" style="background-color: transparent; border: 0px; display: none;"></iframe>
+</body>
+</html>
